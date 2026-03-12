@@ -1,5 +1,7 @@
 'use client'
 
+import { useEffect, useState } from 'react'
+
 interface Status {
   status: string
   version: string
@@ -12,51 +14,52 @@ interface Status {
   }
 }
 
-export default function AgentStatus({ status }: { status: Status | null }) {
-  if (!status) return null
+export default function AgentStatus() {
+  const [status, setStatus] = useState<Status | null>(null)
+  const [loading, setLoading] = useState(true)
 
-  const successRate = status.execution_summary?.success_rate || 0
-  const successPercentage = (successRate * 100).toFixed(0)
+  useEffect(() => {
+    fetchStatus()
+    const interval = setInterval(fetchStatus, 5000) // Refresh every 5 seconds for live updates
+    return () => clearInterval(interval)
+  }, [])
+
+  const fetchStatus = async () => {
+    try {
+      const response = await fetch('/api/status')
+      const data = await response.json()
+      setStatus(data)
+    } catch (error) {
+      console.error('Failed to fetch status:', error)
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  const getStatusColor = (status: string) => {
+    return status === 'Online' ? 'text-green-400' : 'text-red-400'
+  }
 
   return (
     <div className="bg-slate-800 rounded-lg p-6 border border-slate-700">
-      <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-bold text-white">Agent Status</h2>
-        <span className="flex items-center gap-2">
-          <div className="w-3 h-3 rounded-full bg-green-500 animate-pulse"></div>
-          <span className="text-green-400 font-medium">Online</span>
-        </span>
-      </div>
-
-      <div className="grid grid-cols-2 gap-4">
-        <div className="bg-slate-700/50 rounded p-4">
-          <p className="text-slate-400 text-sm">Version</p>
-          <p className="text-xl font-semibold text-white">{status.version}</p>
-        </div>
-        
-        <div className="bg-slate-700/50 rounded p-4">
-          <p className="text-slate-400 text-sm">Tools Available</p>
-          <p className="text-xl font-semibold text-white">{status.tools_available}</p>
-        </div>
-
-        <div className="bg-slate-700/50 rounded p-4">
-          <p className="text-slate-400 text-sm">Tasks Completed</p>
-          <p className="text-xl font-semibold text-white">
-            {status.execution_summary?.total_tasks || 0}
+      <h2 className="text-xl font-bold text-white mb-4">Agent Status</h2>
+      {loading ? (
+        <p className="text-slate-400">Loading status...</p>
+      ) : status ? (
+        <div className="space-y-3">
+          <p className={`text-lg font-semibold ${getStatusColor(status.status)}`}>
+            {status.status}
           </p>
+          <div className="text-sm text-slate-400 space-y-1">
+            <p>Version: {status.version}</p>
+            <p>Tools: {status.tools_available}</p>
+            {status.execution_summary && (
+              <p>Success Rate: {(status.execution_summary.success_rate * 100).toFixed(0)}%</p>
+            )}
+          </div>
         </div>
-
-        <div className="bg-slate-700/50 rounded p-4">
-          <p className="text-slate-400 text-sm">Success Rate</p>
-          <p className="text-xl font-semibold text-white">{successPercentage}%</p>
-        </div>
-      </div>
-
-      {status.session_id && (
-        <div className="mt-4 pt-4 border-t border-slate-600">
-          <p className="text-xs text-slate-400">Session ID</p>
-          <p className="text-sm font-mono text-slate-300">{status.session_id}</p>
-        </div>
+      ) : (
+        <p className="text-slate-400">Status unavailable</p>
       )}
     </div>
   )

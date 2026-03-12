@@ -14,6 +14,8 @@ export default function MemoryViewer() {
 
   useEffect(() => {
     fetchMemories()
+    const interval = setInterval(fetchMemories, 15000) // Refresh every 15 seconds for live updates
+    return () => clearInterval(interval)
   }, [])
 
   const fetchMemories = async () => {

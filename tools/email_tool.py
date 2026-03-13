@@ -1,16 +1,16 @@
 import smtplib
 from email.message import EmailMessage
 from typing import Dict, Any
-from config import settings
+import config
 
 class EmailTool:
     """Sends emails via SMTP."""
     
     def __init__(self):
-        self.host = settings.SMTP_HOST
-        self.port = settings.SMTP_PORT
-        self.user = settings.SMTP_USER
-        self.password = settings.SMTP_PASS
+        self.host = config.SMTP_HOST
+        self.port = config.SMTP_PORT
+        self.user = config.SMTP_USER
+        self.password = config.SMTP_PASSWORD
 
     async def run(self, to: str, subject: str, body: str) -> Dict[str, Any]:
         """Sends an email message."""

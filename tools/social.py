@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from config import settings
+
 import logging
 
 class SocialTool:

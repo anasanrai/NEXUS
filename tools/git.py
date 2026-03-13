@@ -1,7 +1,7 @@
 import git
 from typing import Dict, Any
 from pathlib import Path
-from config import settings
+
 
 class GitTool:
     """Manages Git repository operations."""

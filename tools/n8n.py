@@ -1,12 +1,12 @@
 import requests
 from typing import Dict, Any
-from config import settings
+import config
 
 class N8nTool:
     """Interacts with n8n workflow automation API."""
     
     def __init__(self):
-        self.api_key = settings.N8N_API_KEY
+        self.api_key = config.N8N_API_KEY
         self.base_url = "http://localhost:5678/api/v1" # Default local n8n
 
     async def run(self, action: str, **kwargs) -> Dict[str, Any]:

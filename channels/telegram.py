@@ -1,13 +1,13 @@
 from telegram import Update, Bot
 from telegram.ext import ApplicationBuilder, CommandHandler, MessageHandler, filters, ContextTypes
-from config import settings
+import config
 import logging
 
 class TelegramChannel:
     """Interface for Telegram bot communication."""
     
     def __init__(self, agent: Any):
-        self.token = settings.TELEGRAM_BOT_TOKEN
+        self.token = config.TELEGRAM_BOT_TOKEN
         self.agent = agent
         self.logger = logging.getLogger("nexus.channels.telegram")
 

@@ -7,13 +7,30 @@ class ShellTool:
     def __init__(self):
         pass
 
-    async def run(self, command: str) -> Dict[str, Any]:
+    async def run_command(self, command: str) -> Dict[str, Any]:
         """Runs a shell command and returns output."""
         try:
             # Note: In a real production environment, this should be heavily sandboxed
             result = subprocess.run(
                 command, 
                 shell=True, 
+                capture_output=True, 
+                text=True, 
+                timeout=30
+            )
+            return {
+                "stdout": result.stdout,
+                "stderr": result.stderr,
+                "returncode": result.returncode
+            }
+        except Exception as e:
+            return {"error": str(e)}
+
+    async def run_python(self, code: str) -> Dict[str, Any]:
+        """Runs Python code safely and returns output."""
+        try:
+            result = subprocess.run(
+                ["python3", "-c", code], 
                 capture_output=True, 
                 text=True, 
                 timeout=30

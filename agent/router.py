@@ -1,13 +1,13 @@
 import json
 from typing import List, Dict, Any
 from openai import OpenAI
-from config import settings
+import config
 
 class IntentRouter:
     """Routes user input to specific agent capabilities or tools."""
     
-    def __init__(self, model: str = settings.DEFAULT_MODEL):
-        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    def __init__(self, model: str = config.MODEL_PRIMARY):
+        self.client = OpenAI(api_key=config.OPENROUTER_API_KEY)
         self.model = model
 
     async def route(self, user_input: str, history: List[Dict[str, str]] = None) -> Dict[str, Any]:

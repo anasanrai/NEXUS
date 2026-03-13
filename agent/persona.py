@@ -1,5 +1,5 @@
 from typing import Dict, Any
-from config import settings
+
 
 class AgentPersona:
     """Manages the identity, tone, and behavioral constraints of the agent."""

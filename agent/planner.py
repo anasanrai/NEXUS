@@ -1,13 +1,13 @@
 import json
 from typing import List, Dict, Any
 from openai import OpenAI
-from config import settings
+import config
 
 class TaskPlanner:
     """Breaks down complex requests into a sequence of executable steps."""
     
-    def __init__(self, model: str = settings.DEFAULT_MODEL):
-        self.client = OpenAI(api_key=settings.OPENAI_API_KEY)
+    def __init__(self, model: str = config.MODEL_PRIMARY):
+        self.client = OpenAI(api_key=config.OPENROUTER_API_KEY)
         self.model = model
 
     async def create_plan(self, objective: str, available_tools: List[str]) -> List[Dict[str, Any]]:

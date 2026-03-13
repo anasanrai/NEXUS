@@ -1,12 +1,12 @@
 import requests
 from typing import Dict, Any
-from config import settings
+import config
 
 class VercelTool:
     """Manages Vercel deployments via API."""
     
     def __init__(self):
-        self.token = settings.VERCEL_TOKEN
+        self.token = config.VERCEL_TOKEN
 
     async def run(self, action: str, **kwargs) -> Dict[str, Any]:
         """

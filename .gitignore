@@ -67,3 +67,5 @@ Thumbs.db
 
 # Redis
 dump.rdb
+dashboard/node_modules/
+node_modules/

@@ -1,7 +1,8 @@
-"""NEXUS Agent Package"""
-from agent.core import nexus_core
-from agent.router import ModelRouter
-from agent.planner import task_planner
-from agent.executor import task_executor
+# Agent package initialization
+from .core import NexusAgent
+from .router import IntentRouter
+from .persona import AgentPersona
+from .planner import TaskPlanner
+from .executor import ActionExecutor
 
-__all__ = ["nexus_core", "ModelRouter", "task_planner", "task_executor"]
+__all__ = ["NexusAgent", "IntentRouter", "AgentPersona", "TaskPlanner", "ActionExecutor"]

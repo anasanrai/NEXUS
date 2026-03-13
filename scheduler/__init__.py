@@ -1,4 +1,4 @@
-"""NEXUS Scheduler Package"""
-from scheduler.cron import nexus_scheduler
+# Scheduler package initialization
+from .cron import CronScheduler
 
-__all__ = ["nexus_scheduler"]
+__all__ = ["CronScheduler"]

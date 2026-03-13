@@ -1,185 +1,57 @@
-"""
-NEXUS Configuration Module
-Loads and manages all environment variables and global settings.
-"""
-
 import os
-from typing import Optional
-from dataclasses import dataclass
+from pathlib import Path
 from dotenv import load_dotenv
+from pydantic_settings import BaseSettings
+from typing import Optional
 
 # Load environment variables from .env file
 load_dotenv()
 
+class Settings(BaseSettings):
+    # Base Directory
+    BASE_DIR: Path = Path(__file__).resolve().parent
 
-@dataclass
-class LLMConfig:
-    """Language Model configuration."""
-    openrouter_api_key: str = os.getenv("OPENROUTER_API_KEY", "")
-    gemini_api_key: str = os.getenv("GEMINI_API_KEY", "")
-    anthropic_api_key: str = os.getenv("ANTHROPIC_API_KEY", "")
-    
-    primary_model: str = "minimax/minimax-m2.5"
-    browser_model: str = "z-ai/glm-5"
-    fast_model: str = "google/gemini-2.5-flash"
-    fallback_model: str = "anthropic/claude-sonnet-4-5"
+    # Core AI Configuration
+    OPENAI_API_KEY: str = os.getenv("OPENAI_API_KEY", "")
+    OPENROUTER_API_KEY: str = os.getenv("OPENROUTER_API_KEY", "")
+    DEFAULT_MODEL: str = os.getenv("DEFAULT_MODEL", "minimax/minimax-m2.5")
+    EMBEDDING_MODEL: str = os.getenv("EMBEDDING_MODEL", "text-embedding-3-small")
 
+    # Tiered Model Stack
+    PRIMARY_BRAIN_MODEL: str = os.getenv("PRIMARY_BRAIN_MODEL", "minimax/minimax-m2.5")
+    BROWSER_RESEARCH_MODEL: str = os.getenv("BROWSER_RESEARCH_MODEL", "z-ai/glm-5")
+    FAST_LOOPS_MODEL: str = os.getenv("FAST_LOOPS_MODEL", "google/gemini-2.0-flash")
+    FALLBACK_PRECISION_MODEL: str = os.getenv("FALLBACK_PRECISION_MODEL", "anthropic/claude-3-5-sonnet")
 
-@dataclass
-class TelegramConfig:
-    """Telegram bot configuration."""
-    bot_token: str = os.getenv("TELEGRAM_BOT_TOKEN", "")
-    chat_id: str = os.getenv("TELEGRAM_CHAT_ID", "")
+    # System Configuration
+    DEBUG: bool = os.getenv("DEBUG", "True").lower() == "true"
+    LOG_LEVEL: str = os.getenv("LOG_LEVEL", "INFO")
+    APP_SECRET_KEY: str = os.getenv("APP_SECRET_KEY", "nexus-super-secret-key")
 
+    # Channel Configuration
+    TELEGRAM_BOT_TOKEN: Optional[str] = os.getenv("TELEGRAM_BOT_TOKEN")
+    TELEGRAM_CHAT_ID: Optional[str] = os.getenv("TELEGRAM_CHAT_ID")
 
-@dataclass
-class DatabaseConfig:
-    """Database configuration."""
-    supabase_url: str = os.getenv("SUPABASE_URL", "")
-    supabase_key: str = os.getenv("SUPABASE_KEY", "")
-    redis_url: str = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+    # Tool Specific Keys
+    SERPAPI_API_KEY: Optional[str] = os.getenv("SERPAPI_API_KEY")
+    BROWSERLESS_API_KEY: Optional[str] = os.getenv("BROWSERLESS_API_KEY")
+    VERCEL_TOKEN: Optional[str] = os.getenv("VERCEL_TOKEN")
+    GITHUB_TOKEN: Optional[str] = os.getenv("GITHUB_TOKEN")
+    N8N_API_KEY: Optional[str] = os.getenv("N8N_API_KEY")
 
+    # Database / Memory
+    DATABASE_URL: str = os.getenv("DATABASE_URL", "sqlite:///./nexus.db")
+    REDIS_URL: Optional[str] = os.getenv("REDIS_URL")
 
-@dataclass
-class SearchConfig:
-    """Search configuration."""
-    tavily_api_key: str = os.getenv("TAVILY_API_KEY", "")
+    # Email Configuration
+    SMTP_HOST: str = os.getenv("SMTP_HOST", "smtp.gmail.com")
+    SMTP_PORT: int = int(os.getenv("SMTP_PORT", "587"))
+    SMTP_USER: Optional[str] = os.getenv("SMTP_USER")
+    SMTP_PASS: Optional[str] = os.getenv("SMTP_PASS")
 
+    class Config:
+        env_file = ".env"
+        case_sensitive = True
 
-@dataclass
-class GitConfig:
-    """Git/GitHub configuration."""
-    github_token: str = os.getenv("GITHUB_TOKEN", "")
-
-
-@dataclass
-class DeploymentConfig:
-    """Deployment configuration."""
-    vercel_token: str = os.getenv("VERCEL_TOKEN", "")
-    vercel_project_id: str = os.getenv("VERCEL_PROJECT_ID", "")
-
-
-@dataclass
-class WorkflowConfig:
-    """n8n workflow configuration."""
-    n8n_url: str = os.getenv("N8N_URL", "http://localhost:5678")
-    n8n_api_key: str = os.getenv("N8N_API_KEY", "")
-
-
-@dataclass
-class WordPressConfig:
-    """WordPress configuration."""
-    wordpress_url: str = os.getenv("WORDPRESS_URL", "")
-    wordpress_user: str = os.getenv("WORDPRESS_USER", "")
-    wordpress_password: str = os.getenv("WORDPRESS_PASSWORD", "")
-
-
-@dataclass
-class MediaConfig:
-    """Media generation configuration."""
-    deepgram_api_key: str = os.getenv("DEEPGRAM_API_KEY", "")
-    fish_audio_key: str = os.getenv("FISH_AUDIO_KEY", "")
-    replicate_api_token: str = os.getenv("REPLICATE_API_TOKEN", "")
-
-
-@dataclass
-class PaymentConfig:
-    """Payment configuration."""
-    stripe_key: str = os.getenv("STRIPE_KEY", "")
-
-
-@dataclass
-class SocialConfig:
-    """Social media configuration."""
-    twitter_api_key: str = os.getenv("TWITTER_API_KEY", "")
-    twitter_api_secret: str = os.getenv("TWITTER_API_SECRET", "")
-    twitter_access_token: str = os.getenv("TWITTER_ACCESS_TOKEN", "")
-    twitter_access_secret: str = os.getenv("TWITTER_ACCESS_SECRET", "")
-    linkedin_access_token: str = os.getenv("LINKEDIN_ACCESS_TOKEN", "")
-    instagram_access_token: str = os.getenv("INSTAGRAM_ACCESS_TOKEN", "")
-
-
-@dataclass
-class EmailConfig:
-    """Email configuration."""
-    smtp_server: str = os.getenv("SMTP_SERVER", "smtp.gmail.com")
-    smtp_port: int = int(os.getenv("SMTP_PORT", "587"))
-    smtp_email: str = os.getenv("SMTP_EMAIL", "")
-    smtp_password: str = os.getenv("SMTP_PASSWORD", "")
-
-
-@dataclass
-class AppConfig:
-    """Application configuration."""
-    environment: str = os.getenv("ENVIRONMENT", "development")
-    log_level: str = os.getenv("LOG_LEVEL", "INFO")
-    debug: bool = os.getenv("DEBUG", "False").lower() == "true"
-    agent_timeout: int = int(os.getenv("AGENT_TIMEOUT", "300"))
-
-
-@dataclass
-class NEXUSConfig:
-    """Main NEXUS configuration combining all sub-configurations."""
-    llm: LLMConfig
-    telegram: TelegramConfig
-    database: DatabaseConfig
-    search: SearchConfig
-    git: GitConfig
-    deployment: DeploymentConfig
-    workflow: WorkflowConfig
-    wordpress: WordPressConfig
-    media: MediaConfig
-    payment: PaymentConfig
-    social: SocialConfig
-    email: EmailConfig
-    app: AppConfig
-
-
-def load_config() -> NEXUSConfig:
-    """
-    Load all configuration from environment variables.
-    
-    Returns:
-        NEXUSConfig: Complete configuration object
-    """
-    return NEXUSConfig(
-        llm=LLMConfig(),
-        telegram=TelegramConfig(),
-        database=DatabaseConfig(),
-        search=SearchConfig(),
-        git=GitConfig(),
-        deployment=DeploymentConfig(),
-        workflow=WorkflowConfig(),
-        wordpress=WordPressConfig(),
-        media=MediaConfig(),
-        payment=PaymentConfig(),
-        social=SocialConfig(),
-        email=EmailConfig(),
-        app=AppConfig(),
-    )
-
-
-def validate_config(config: NEXUSConfig) -> bool:
-    """
-    Validate that all required configuration values are present.
-    
-    Args:
-        config: Configuration object to validate
-        
-    Returns:
-        bool: True if all required configs are present
-    """
-    required_fields = [
-        config.llm.openrouter_api_key,
-        config.telegram.bot_token,
-        config.database.supabase_url,
-        config.database.supabase_key,
-        config.search.tavily_api_key,
-        config.git.github_token,
-    ]
-    
-    return all(required_fields)
-
-
-# Global configuration instance
-config = load_config()
+# Global settings instance
+settings = Settings()
